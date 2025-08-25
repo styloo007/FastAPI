@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from schema.userInput import UserInput
+from schema.predictionResponse import PredictionResponse
 from model.predict import model, MODEL_VERSION, predictOutput
 
 app = FastAPI()
@@ -19,7 +20,7 @@ def healthCheck():
         'model_loaded':model is not None
     }
 
-@app.post('/predict')
+@app.post('/predict', response_model = PredictionResponse)
 def predictPremium(data: UserInput):
     
     inputData = {
@@ -31,7 +32,6 @@ def predictPremium(data: UserInput):
         'city_tier':data.city_tier
     }
     
-    
     prediction = predictOutput(inputData)
     
-    return JSONResponse(status_code=200,content={'predicted_category':prediction})
+    return JSONResponse(status_code=200,content={'response':prediction})
